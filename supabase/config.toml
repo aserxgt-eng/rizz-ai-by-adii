@@ -1,1 +1,4 @@
 project_id = "hlilalwlideqeopwfcby"
+
+[functions.rizz-generate]
+verify_jwt = false
