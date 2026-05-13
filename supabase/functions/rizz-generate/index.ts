@@ -5,16 +5,30 @@ const corsHeaders = {
 };
 
 const MODES: Record<string, string> = {
-  smart: "Generate 3 smart, natural, context-aware texting replies. Keep them short, casual, and human.",
-  flirty: "Generate 3 flirty, charming replies with confident rizz. Playful, teasing, never cringe. Gen Z energy.",
-  funny: "Generate 3 hilarious, witty replies. Dry humor, clever, punchy.",
-  savage: "Generate 3 savage comeback replies. Confident, sharp, unbothered. Not mean — iconic.",
-  romantic: "Generate 3 romantic, emotionally warm replies. Sincere, soft, attractive.",
-  grammar: "Fix grammar and clarity while preserving the user's slang, emojis, tone and Gen Z personality. Return 1 corrected version.",
-  pickup: "Generate 3 creative pickup lines. Smooth, original, not corny.",
-  apology: "Generate 3 sincere apology messages. Mature, honest, no over-explaining.",
-  comeback: "Generate 3 sharp comebacks. Confident, witty, lethal.",
-  goodnight: "Generate 3 cute good night/morning texts. Sweet, personal, non-cringe.",
+  smart: "Generate {N} smart, natural, context-aware texting replies. Keep them short, casual, and human.",
+  flirty: "Generate {N} flirty, charming replies with confident rizz. Playful, teasing, never cringe. Gen Z energy.",
+  funny: "Generate {N} hilarious, witty replies. Dry humor, clever, punchy.",
+  savage: "Generate {N} savage comeback replies. Confident, sharp, unbothered. Not mean — iconic.",
+  romantic: "Generate {N} romantic, emotionally warm replies. Sincere, soft, attractive.",
+  emotional: "Generate {N} emotionally deep, heartfelt replies. Vulnerable, sincere, moving.",
+  stylish: "Generate {N} stylish, aesthetic replies with elite vibes. Confident, polished, magnetic.",
+  casual: "Generate {N} casual, chill replies. Easy-going, friendly, low effort cool.",
+  grammar: "Fix grammar and clarity while preserving the user's slang, emojis, tone and personality. Return 1 corrected version.",
+  pickup: "Generate {N} creative pickup lines. Smooth, original, not corny.",
+  apology: "Generate {N} sincere apology messages. Mature, honest, no over-explaining.",
+  comeback: "Generate {N} sharp comebacks. Confident, witty, lethal.",
+  goodnight: "Generate {N} cute good night/morning texts. Sweet, personal, non-cringe.",
+  bio: "Generate {N} short social media bios. Distinctive, witty, scroll-stopping.",
+  caption: "Generate {N} social media captions. Punchy, aesthetic, post-ready.",
+  roast: "Generate {N} clever roasts. Sharp, playful, never crossing the line.",
+  comment: "Generate {N} cool social media comments. Engaging, on-trend, brief.",
+  emoji: "Generate {N} expressive emoji-rich replies. Creative emoji combos that read like a vibe.",
+};
+
+const LANG_NAMES: Record<string, string> = {
+  en: "English", hi: "Hindi", mr: "Marathi", es: "Spanish", fr: "French", de: "German",
+  ja: "Japanese", ko: "Korean", ru: "Russian", ar: "Arabic", pt: "Portuguese",
+  ta: "Tamil", te: "Telugu", bn: "Bengali", pa: "Punjabi", ur: "Urdu",
 };
 
 const SCORE_PROMPT = `Analyze the conversation and return ONLY a JSON object (no markdown) with these numeric fields 0-100:
@@ -24,9 +38,12 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { mode = "smart", context = "", personality = "Gen Z", action = "reply" } = await req.json();
+    const { mode = "smart", context = "", personality = "Gen Z", action = "reply", language = "en", count = 3 } = await req.json();
     const apiKey = Deno.env.get("LOVABLE_API_KEY");
     if (!apiKey) throw new Error("LOVABLE_API_KEY missing");
+
+    const langName = LANG_NAMES[language] || "English";
+    const n = Math.max(1, Math.min(5, Number(count) || 3));
 
     let system = "";
     let user = "";
@@ -35,13 +52,14 @@ Deno.serve(async (req) => {
       system = "You are RizzAI's analyzer. " + SCORE_PROMPT;
       user = `Conversation:\n${context}`;
     } else {
-      const modeInstr = MODES[mode] ?? MODES.smart;
+      const modeInstr = (MODES[mode] ?? MODES.smart).replace(/\{N\}/g, String(n));
       system = `You are RizzAI — a futuristic Gen Z texting assistant. ${modeInstr}
 Persona voice: ${personality}.
-Rules: no quotation marks, no numbering, return EXACTLY one reply per line. Keep replies under 25 words unless the user requests long. Use natural lowercase, sparing emojis, zero cringe.`;
+OUTPUT LANGUAGE: ${langName} (${language}). Write the replies natively in ${langName} using its proper script and natural idioms — do NOT transliterate, do NOT add translations, do NOT mix English unless the language naturally code-switches. Preserve the requested emotion and tone after translating intent. Use correct Unicode and grammar.
+Rules: no quotation marks, no numbering, return EXACTLY one reply per line. Keep replies under 25 words unless the user requests long. Sparing emojis, zero cringe.`;
       user = context?.trim()
-        ? `Conversation context (most recent last):\n${context}\n\nGenerate replies I should send next.`
-        : `Generate example replies showcasing your style.`;
+        ? `Conversation context (most recent last):\n${context}\n\nGenerate replies I should send next, in ${langName}.`
+        : `Generate example replies in ${langName} showcasing your style.`;
     }
 
     const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
