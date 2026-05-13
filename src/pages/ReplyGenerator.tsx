@@ -4,6 +4,9 @@ import { Copy, Sparkles, Loader2, Heart, Flame, Smile, Zap, Wand2, Mic } from "l
 import { ScreenShell } from "@/components/Shell";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { useLanguage } from "@/hooks/useLanguage";
+import { findLang, isRTL } from "@/lib/languages";
 
 const MODES = [
   { id: "smart", label: "Smart", icon: Sparkles },
@@ -24,13 +27,16 @@ const ReplyGenerator = ({ defaultMode = "smart", title = "AI Reply Generator", s
   const [context, setContext] = useState("");
   const [replies, setReplies] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const { lang } = useLanguage();
+  const langInfo = findLang(lang);
+  const dir = isRTL(lang) ? "rtl" : "ltr";
 
   const generate = async () => {
     if (!context.trim()) { toast.error("Drop the convo first"); return; }
     setLoading(true); setReplies([]);
     try {
       const { data, error } = await supabase.functions.invoke("rizz-generate", {
-        body: { mode, personality: persona, context, action: "reply" },
+        body: { mode, personality: persona, context, action: "reply", language: lang },
       });
       if (error) throw error;
       if (data?.error) { toast.error(data.error); return; }
@@ -45,12 +51,16 @@ const ReplyGenerator = ({ defaultMode = "smart", title = "AI Reply Generator", s
   const voice = () => {
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) { toast.error("Voice not supported on this browser"); return; }
-    const r = new SR(); r.lang = "en-US"; r.start();
+    const r = new SR(); r.lang = lang === "en" ? "en-US" : lang; r.start();
     r.onresult = (e: any) => setContext(prev => (prev ? prev + " " : "") + e.results[0][0].transcript);
   };
 
   return (
     <ScreenShell title={title} subtitle={subtitle}>
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-[11px] font-mono text-muted-foreground/70">output · {langInfo.native}</p>
+        <LanguageSelector />
+      </div>
       <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 -mx-1 px-1">
         {MODES.map(m => (
           <button key={m.id} onClick={() => setMode(m.id)}
@@ -74,6 +84,7 @@ const ReplyGenerator = ({ defaultMode = "smart", title = "AI Reply Generator", s
       <div className="glass-card p-4 mt-4">
         <textarea
           value={context} onChange={e => setContext(e.target.value)}
+          dir={dir}
           placeholder="them: hey wyd...&#10;you: ..."
           className="w-full h-32 bg-transparent resize-none outline-none text-sm placeholder:text-muted-foreground/60 font-mono"
         />
@@ -95,7 +106,7 @@ const ReplyGenerator = ({ defaultMode = "smart", title = "AI Reply Generator", s
               <div className="w-7 h-7 rounded-xl bg-gradient-rizz flex items-center justify-center shrink-0 text-[11px] font-display font-black text-primary-foreground">
                 {i + 1}
               </div>
-              <p className="flex-1 text-sm leading-relaxed">{r}</p>
+              <p dir={dir} className="flex-1 text-sm leading-relaxed">{r}</p>
               <button onClick={() => copy(r)} className="p-1.5 rounded-lg text-muted-foreground hover:text-primary-glow opacity-0 group-hover:opacity-100 transition">
                 <Copy className="w-4 h-4" />
               </button>
