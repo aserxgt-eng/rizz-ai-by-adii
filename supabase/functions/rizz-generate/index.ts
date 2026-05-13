@@ -29,6 +29,10 @@ const LANG_NAMES: Record<string, string> = {
   en: "English", hi: "Hindi", mr: "Marathi", es: "Spanish", fr: "French", de: "German",
   ja: "Japanese", ko: "Korean", ru: "Russian", ar: "Arabic", pt: "Portuguese",
   ta: "Tamil", te: "Telugu", bn: "Bengali", pa: "Punjabi", ur: "Urdu",
+  hinglish: "Hinglish (Hindi written in English/Latin alphabets, casual Indian Gen Z code-mix of Hindi + English words, e.g. 'bhai tu kya kar raha hai bro')",
+  "roman-hi": "Romanized Hindi (Hindi pronunciation written using ONLY English/Latin alphabets — NO Devanagari script, NO English translation, e.g. 'kya haal hai dost')",
+  "roman-mr": "Romanized Marathi (Marathi pronunciation written using ONLY English/Latin alphabets — NO Devanagari script, NO English translation, e.g. 'kasa kay mitra, kay challay')",
+  auto: "AUTO-DETECT",
 };
 
 const SCORE_PROMPT = `Analyze the conversation and return ONLY a JSON object (no markdown) with these numeric fields 0-100:
