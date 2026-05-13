@@ -27,13 +27,16 @@ const ReplyGenerator = ({ defaultMode = "smart", title = "AI Reply Generator", s
   const [context, setContext] = useState("");
   const [replies, setReplies] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const { lang } = useLanguage();
+  const langInfo = findLang(lang);
+  const dir = isRTL(lang) ? "rtl" : "ltr";
 
   const generate = async () => {
     if (!context.trim()) { toast.error("Drop the convo first"); return; }
     setLoading(true); setReplies([]);
     try {
       const { data, error } = await supabase.functions.invoke("rizz-generate", {
-        body: { mode, personality: persona, context, action: "reply" },
+        body: { mode, personality: persona, context, action: "reply", language: lang },
       });
       if (error) throw error;
       if (data?.error) { toast.error(data.error); return; }
@@ -48,7 +51,7 @@ const ReplyGenerator = ({ defaultMode = "smart", title = "AI Reply Generator", s
   const voice = () => {
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) { toast.error("Voice not supported on this browser"); return; }
-    const r = new SR(); r.lang = "en-US"; r.start();
+    const r = new SR(); r.lang = lang === "en" ? "en-US" : lang; r.start();
     r.onresult = (e: any) => setContext(prev => (prev ? prev + " " : "") + e.results[0][0].transcript);
   };
 
