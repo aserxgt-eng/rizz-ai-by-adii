@@ -4,6 +4,9 @@ import { Copy, Sparkles, Loader2, Heart, Flame, Smile, Zap, Wand2, Mic } from "l
 import { ScreenShell } from "@/components/Shell";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { useLanguage } from "@/hooks/useLanguage";
+import { findLang, isRTL } from "@/lib/languages";
 
 const MODES = [
   { id: "smart", label: "Smart", icon: Sparkles },

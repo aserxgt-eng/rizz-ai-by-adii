@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ParticleField } from "@/components/ParticleField";
 import { BottomNav } from "@/components/BottomNav";
+import { RizzBubble } from "@/components/RizzBubble";
 import Splash from "./pages/Splash";
 import Onboarding from "./pages/Onboarding";
 import Home from "./pages/Home";
@@ -49,6 +50,7 @@ const Layout = () => {
         <Route path="*" element={<NotFound />} />
       </Routes>
       {!hide && <BottomNav />}
+      <RizzBubble />
     </>
   );
 };
