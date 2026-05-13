@@ -57,6 +57,10 @@ const ReplyGenerator = ({ defaultMode = "smart", title = "AI Reply Generator", s
 
   return (
     <ScreenShell title={title} subtitle={subtitle}>
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-[11px] font-mono text-muted-foreground/70">output · {langInfo.native}</p>
+        <LanguageSelector />
+      </div>
       <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 -mx-1 px-1">
         {MODES.map(m => (
           <button key={m.id} onClick={() => setMode(m.id)}
@@ -80,6 +84,7 @@ const ReplyGenerator = ({ defaultMode = "smart", title = "AI Reply Generator", s
       <div className="glass-card p-4 mt-4">
         <textarea
           value={context} onChange={e => setContext(e.target.value)}
+          dir={dir}
           placeholder="them: hey wyd...&#10;you: ..."
           className="w-full h-32 bg-transparent resize-none outline-none text-sm placeholder:text-muted-foreground/60 font-mono"
         />
@@ -101,7 +106,7 @@ const ReplyGenerator = ({ defaultMode = "smart", title = "AI Reply Generator", s
               <div className="w-7 h-7 rounded-xl bg-gradient-rizz flex items-center justify-center shrink-0 text-[11px] font-display font-black text-primary-foreground">
                 {i + 1}
               </div>
-              <p className="flex-1 text-sm leading-relaxed">{r}</p>
+              <p dir={dir} className="flex-1 text-sm leading-relaxed">{r}</p>
               <button onClick={() => copy(r)} className="p-1.5 rounded-lg text-muted-foreground hover:text-primary-glow opacity-0 group-hover:opacity-100 transition">
                 <Copy className="w-4 h-4" />
               </button>
