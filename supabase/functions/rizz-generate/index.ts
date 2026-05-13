@@ -29,6 +29,10 @@ const LANG_NAMES: Record<string, string> = {
   en: "English", hi: "Hindi", mr: "Marathi", es: "Spanish", fr: "French", de: "German",
   ja: "Japanese", ko: "Korean", ru: "Russian", ar: "Arabic", pt: "Portuguese",
   ta: "Tamil", te: "Telugu", bn: "Bengali", pa: "Punjabi", ur: "Urdu",
+  hinglish: "Hinglish (Hindi written in English/Latin alphabets, casual Indian Gen Z code-mix of Hindi + English words, e.g. 'bhai tu kya kar raha hai bro')",
+  "roman-hi": "Romanized Hindi (Hindi pronunciation written using ONLY English/Latin alphabets — NO Devanagari script, NO English translation, e.g. 'kya haal hai dost')",
+  "roman-mr": "Romanized Marathi (Marathi pronunciation written using ONLY English/Latin alphabets — NO Devanagari script, NO English translation, e.g. 'kasa kay mitra, kay challay')",
+  auto: "AUTO-DETECT",
 };
 
 const SCORE_PROMPT = `Analyze the conversation and return ONLY a JSON object (no markdown) with these numeric fields 0-100:
@@ -53,13 +57,18 @@ Deno.serve(async (req) => {
       user = `Conversation:\n${context}`;
     } else {
       const modeInstr = (MODES[mode] ?? MODES.smart).replace(/\{N\}/g, String(n));
+      const isAuto = language === "auto";
+      const langDirective = isAuto
+        ? `OUTPUT LANGUAGE: AUTO-DETECT. First silently detect the language/script of the user's conversation context (including Hinglish, Romanized Hindi/Marathi, Devanagari, Arabic, etc.). Reply in the SAME language AND the SAME script the user is texting in. If the user mixes English+Hindi (Hinglish), reply in Hinglish. If they write Marathi in Latin letters, reply in Romanized Marathi. Match their exact vibe, slang and code-switching pattern.`
+        : `OUTPUT LANGUAGE: ${langName}. Write the replies natively in this language using its proper script and natural idioms — do NOT add translations, do NOT mix English unless the language naturally code-switches (Hinglish does). Use correct Unicode and grammar.`;
       system = `You are RizzAI — a futuristic Gen Z texting assistant. ${modeInstr}
 Persona voice: ${personality}.
-OUTPUT LANGUAGE: ${langName} (${language}). Write the replies natively in ${langName} using its proper script and natural idioms — do NOT transliterate, do NOT add translations, do NOT mix English unless the language naturally code-switches. Preserve the requested emotion and tone after translating intent. Use correct Unicode and grammar.
+${langDirective}
+TRANSLATION RULE: When translating or rewriting, PRESERVE the original tone, emotion, energy, sarcasm, flirtiness, humor and intent — never flatten the vibe. Keep slang equivalent, not literal.
 Rules: no quotation marks, no numbering, return EXACTLY one reply per line. Keep replies under 25 words unless the user requests long. Sparing emojis, zero cringe.`;
       user = context?.trim()
-        ? `Conversation context (most recent last):\n${context}\n\nGenerate replies I should send next, in ${langName}.`
-        : `Generate example replies in ${langName} showcasing your style.`;
+        ? `Conversation context (most recent last):\n${context}\n\nGenerate replies I should send next${isAuto ? " in the user's own language/script" : `, in ${langName}`}.`
+        : `Generate example replies${isAuto ? "" : ` in ${langName}`} showcasing your style.`;
     }
 
     const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
