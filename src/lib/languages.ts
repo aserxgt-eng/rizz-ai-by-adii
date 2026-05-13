@@ -23,6 +23,10 @@ export const LANGUAGES: Language[] = [
   { code: "bn", name: "Bengali", native: "বাংলা", flag: "🇧🇩" },
   { code: "pa", name: "Punjabi", native: "ਪੰਜਾਬੀ", flag: "🇮🇳" },
   { code: "ur", name: "Urdu", native: "اردو", flag: "🇵🇰", rtl: true },
+  { code: "hinglish", name: "Hinglish", native: "Hinglish", flag: "🇮🇳" },
+  { code: "roman-hi", name: "Roman Hindi", native: "Hindi (Roman)", flag: "🇮🇳" },
+  { code: "roman-mr", name: "Roman Marathi", native: "Marathi (Roman)", flag: "🇮🇳" },
+  { code: "auto", name: "Auto-detect", native: "Auto ✨", flag: "🌐" },
 ];
 
 const KEY = "rizz.lang";
