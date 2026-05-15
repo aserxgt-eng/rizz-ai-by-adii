@@ -23,6 +23,16 @@ const MODES: Record<string, string> = {
   roast: "Generate {N} clever roasts. Sharp, playful, never crossing the line.",
   comment: "Generate {N} cool social media comments. Engaging, on-trend, brief.",
   emoji: "Generate {N} expressive emoji-rich replies. Creative emoji combos that read like a vibe.",
+  loving: "Generate {N} deeply loving replies. Warm, affectionate, partner-energy, makes them feel adored. Soft sweet phrasing, never cheesy.",
+  caring: "Generate {N} caring, supportive replies. Gentle, attentive, protective, ask how they feel, validate them.",
+  innocent: "Generate {N} innocent, sweet, pure-hearted replies. Wholesome, shy-cute energy, no slang, no edge.",
+  emotionless: "Generate {N} cold, flat, emotionless replies. Dry, monotone, minimal words, zero feelings, almost robotic — but still polite.",
+  toxic: "Generate {N} playfully toxic replies. Possessive, dramatic, jealous-bait, addictive — clearly satirical Gen Z 'toxic boyfriend/girlfriend' tone, never actually abusive.",
+  caring_boy: "Generate {N} replies as a caring boyfriend. Protective, warm, soft masculine energy, makes her feel safe.",
+  caring_girl: "Generate {N} replies as a caring girlfriend. Sweet, attentive, nurturing, soft feminine energy.",
+  shy: "Generate {N} shy, blushing replies. Hesitant, soft, cute stutter-energy ('uhm…', '…maybe'), endearing.",
+  bold: "Generate {N} bold, confident replies. Direct, fearless, unapologetic, alpha energy without arrogance.",
+  mysterious: "Generate {N} mysterious replies. Vague, intriguing, leave them wanting more — short, magnetic.",
 };
 
 const LANG_NAMES: Record<string, string> = {
