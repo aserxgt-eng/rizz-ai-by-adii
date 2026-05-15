@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Sparkles, Heart, Camera, Trophy, MessageCircle, Wand2, Flame, Brain, Zap, Bell, Crown } from "lucide-react";
 import { ScreenShell, FloatingBubble } from "@/components/Shell";
+import { useStats } from "@/hooks/useStats";
 
 const features = [
   { to: "/reply", icon: Sparkles, title: "AI Replies", sub: "Smart context-aware texts", grad: "from-primary to-accent-pink" },
@@ -18,6 +19,8 @@ const features = [
 
 const Home = () => {
   const nav = useNavigate();
+  const { stats } = useStats();
+  const isNew = stats.replies === 0 && stats.analyzed === 0;
   return (
     <>
       <ScreenShell title="RizzAI" subtitle="Never overthink a text again.">
@@ -27,8 +30,17 @@ const Home = () => {
         >
           <div className="absolute -top-20 -right-20 w-48 h-48 rounded-full bg-gradient-rizz blur-3xl opacity-40" />
           <p className="text-xs uppercase tracking-[0.2em] text-primary-glow font-mono mb-2">// today</p>
-          <h2 className="font-display text-2xl font-bold mb-1">your rizz is up <span className="neon-text">+24%</span></h2>
-          <p className="text-sm text-muted-foreground mb-4">3 chats analyzed · 12 replies generated · 1 W secured</p>
+          {isNew ? (
+            <>
+              <h2 className="font-display text-2xl font-bold mb-1">welcome to <span className="neon-text">RizzAI</span></h2>
+              <p className="text-sm text-muted-foreground mb-4">fresh start · 0 replies · cook your first one ↓</p>
+            </>
+          ) : (
+            <>
+              <h2 className="font-display text-2xl font-bold mb-1">your rizz score <span className="neon-text">{stats.score || "—"}</span></h2>
+              <p className="text-sm text-muted-foreground mb-4">{stats.analyzed} chats analyzed · {stats.replies} replies generated · {stats.wins} W secured</p>
+            </>
+          )}
           <button onClick={() => nav("/reply")} className="bg-gradient-rizz text-primary-foreground font-bold rounded-2xl px-5 py-3 text-sm shadow-[var(--glow-soft)] hover:scale-[1.02] transition-transform">
             <MessageCircle className="w-4 h-4 inline mr-2" />generate reply
           </button>

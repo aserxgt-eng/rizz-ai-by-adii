@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Copy, Sparkles, Loader2, Heart, Flame, Smile, Zap, Wand2, Mic } from "lucide-react";
+import { Copy, Sparkles, Loader2, Heart, Flame, Smile, Zap, Wand2, Mic, Baby, Ghost, ShieldCheck, Coffee, Skull, HeartHandshake, HeartCrack, Star } from "lucide-react";
 import { ScreenShell } from "@/components/Shell";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { useLanguage } from "@/hooks/useLanguage";
 import { findLang, isRTL } from "@/lib/languages";
+import { useStats } from "@/hooks/useStats";
 
 const MODES = [
   { id: "smart", label: "Smart", icon: Sparkles },
@@ -15,9 +16,21 @@ const MODES = [
   { id: "savage", label: "Savage", icon: Flame },
   { id: "romantic", label: "Romantic", icon: Heart },
   { id: "pickup", label: "Pickup", icon: Zap },
+  { id: "loving", label: "Loving", icon: HeartHandshake },
+  { id: "caring", label: "Caring", icon: ShieldCheck },
+  { id: "innocent", label: "Innocent", icon: Baby },
+  { id: "emotional", label: "Emotional", icon: HeartCrack },
+  { id: "emotionless", label: "Emotionless", icon: Ghost },
+  { id: "chill", label: "Chill", icon: Coffee },
+  { id: "toxic", label: "Toxic", icon: Skull },
+  { id: "stylish", label: "Stylish", icon: Star },
 ];
 
-const PERSONAS = ["Gen Z", "Sigma", "Savage", "Soft Boy", "Soft Girl", "Mature", "Chill", "Confident", "Toxic Funny"];
+const PERSONAS = [
+  "Gen Z", "Sigma", "Savage", "Soft Boy", "Soft Girl", "Mature", "Chill", "Confident",
+  "Toxic Funny", "Caring Boy", "Caring Girl", "Loving Partner", "Innocent", "Emotionless",
+  "Hopeless Romantic", "Mysterious", "Playful Tease", "Protective", "Shy", "Bold",
+];
 
 interface Props { defaultMode?: string; title?: string; subtitle?: string; }
 
@@ -30,6 +43,7 @@ const ReplyGenerator = ({ defaultMode = "smart", title = "AI Reply Generator", s
   const { lang } = useLanguage();
   const langInfo = findLang(lang);
   const dir = isRTL(lang) ? "rtl" : "ltr";
+  const { bump } = useStats();
 
   const generate = async () => {
     if (!context.trim()) { toast.error("Drop the convo first"); return; }
@@ -40,7 +54,9 @@ const ReplyGenerator = ({ defaultMode = "smart", title = "AI Reply Generator", s
       });
       if (error) throw error;
       if (data?.error) { toast.error(data.error); return; }
-      setReplies(data.replies ?? []);
+      const r = data.replies ?? [];
+      setReplies(r);
+      if (r.length) bump({ replies: r.length });
     } catch (e: any) {
       toast.error(e.message ?? "Something broke");
     } finally { setLoading(false); }

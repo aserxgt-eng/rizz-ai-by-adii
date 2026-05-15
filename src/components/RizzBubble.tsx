@@ -7,9 +7,10 @@ import { LanguageSelector } from "./LanguageSelector";
 import { useLanguage } from "@/hooks/useLanguage";
 import { findLang, isRTL } from "@/lib/languages";
 import { toast } from "sonner";
+import { useStats } from "@/hooks/useStats";
 
 const HIDDEN_ROUTES = ["/", "/onboarding"];
-const MODES = ["smart", "flirty", "funny", "savage", "romantic"] as const;
+const MODES = ["smart", "flirty", "funny", "savage", "romantic", "loving", "caring", "innocent", "emotional", "emotionless", "chill", "toxic"] as const;
 type Mode = typeof MODES[number];
 
 export const RizzBubble = () => {
@@ -23,6 +24,7 @@ export const RizzBubble = () => {
   const dragControls = useDragControls();
   const longPressTimer = useRef<number | null>(null);
   const [hidden, setHidden] = useState(false);
+  const { bump } = useStats();
 
   useEffect(() => {
     setHidden(localStorage.getItem("rizz.bubble.hidden") === "1");
@@ -39,7 +41,9 @@ export const RizzBubble = () => {
       });
       if (error) throw error;
       if (data?.error) { toast.error(data.error); return; }
-      setReply(data.replies?.[0] ?? "");
+      const r = data.replies?.[0] ?? "";
+      setReply(r);
+      if (r) bump({ replies: 1 });
     } catch (e: any) {
       toast.error(e.message ?? "failed");
     } finally { setLoading(false); }
