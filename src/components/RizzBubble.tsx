@@ -96,11 +96,15 @@ export const RizzBubble = () => {
           onPointerCancel={clearLP}
           onPointerLeave={clearLP}
           onClick={() => { if (!longPressTimer.current) setOpen(true); clearLP(); }}
-          className="relative w-14 h-14 rounded-full bg-gradient-rizz animate-pulse-glow flex items-center justify-center cursor-grab active:cursor-grabbing shadow-[var(--glow-primary)]"
+          className="relative w-13 h-13 rounded-full flex items-center justify-center cursor-grab active:cursor-grabbing animate-pulse-soft"
+          style={{
+            width: 52, height: 52,
+            background: "linear-gradient(160deg, hsl(247 100% 75%), hsl(265 80% 55%))",
+            boxShadow: "var(--glow-primary), inset 0 1px 0 hsl(0 0% 100% / 0.25)",
+          }}
           aria-label="Open Rizz bubble"
         >
-          <span className="absolute inset-0 rounded-full animate-gradient bg-gradient-to-r from-primary via-accent-pink to-accent opacity-40 blur-md" />
-          <Sparkles className="w-6 h-6 text-primary-foreground relative z-10" />
+          <Sparkles className="w-5 h-5 text-primary-foreground relative z-10" strokeWidth={2.4} />
         </button>
       </motion.div>
 
