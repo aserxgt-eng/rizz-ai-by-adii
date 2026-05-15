@@ -24,6 +24,7 @@ export const RizzBubble = () => {
   const dragControls = useDragControls();
   const longPressTimer = useRef<number | null>(null);
   const [hidden, setHidden] = useState(false);
+  const { bump } = useStats();
 
   useEffect(() => {
     setHidden(localStorage.getItem("rizz.bubble.hidden") === "1");
