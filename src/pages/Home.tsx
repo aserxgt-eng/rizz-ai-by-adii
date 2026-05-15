@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Sparkles, Heart, Camera, Trophy, MessageCircle, Wand2, Flame, Brain, Zap, Bell, Crown } from "lucide-react";
 import { ScreenShell, FloatingBubble } from "@/components/Shell";
+import { useStats } from "@/hooks/useStats";
 
 const features = [
   { to: "/reply", icon: Sparkles, title: "AI Replies", sub: "Smart context-aware texts", grad: "from-primary to-accent-pink" },
