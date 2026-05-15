@@ -43,6 +43,7 @@ const ReplyGenerator = ({ defaultMode = "smart", title = "AI Reply Generator", s
   const { lang } = useLanguage();
   const langInfo = findLang(lang);
   const dir = isRTL(lang) ? "rtl" : "ltr";
+  const { bump } = useStats();
 
   const generate = async () => {
     if (!context.trim()) { toast.error("Drop the convo first"); return; }
@@ -53,7 +54,9 @@ const ReplyGenerator = ({ defaultMode = "smart", title = "AI Reply Generator", s
       });
       if (error) throw error;
       if (data?.error) { toast.error(data.error); return; }
-      setReplies(data.replies ?? []);
+      const r = data.replies ?? [];
+      setReplies(r);
+      if (r.length) bump({ replies: r.length });
     } catch (e: any) {
       toast.error(e.message ?? "Something broke");
     } finally { setLoading(false); }
