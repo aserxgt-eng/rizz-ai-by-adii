@@ -41,7 +41,9 @@ export const RizzBubble = () => {
       });
       if (error) throw error;
       if (data?.error) { toast.error(data.error); return; }
-      setReply(data.replies?.[0] ?? "");
+      const r = data.replies?.[0] ?? "";
+      setReply(r);
+      if (r) bump({ replies: 1 });
     } catch (e: any) {
       toast.error(e.message ?? "failed");
     } finally { setLoading(false); }
