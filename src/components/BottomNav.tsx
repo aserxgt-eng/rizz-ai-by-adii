@@ -1,79 +1,53 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { Home, MessageCircle, Sparkles, Flame, User } from "lucide-react";
+import { Home, Sparkles, Camera, Trophy, Settings as SettingsIcon } from "lucide-react";
 import { motion } from "framer-motion";
 
 const tabs = [
   { to: "/home", icon: Home, label: "Home" },
-  { to: "/analyzer", icon: MessageCircle, label: "Chats" },
-  { to: "/reply", icon: Sparkles, label: "Rizz", center: true },
-  { to: "/score", icon: Flame, label: "Score" },
-  { to: "/profile", icon: User, label: "Profile" },
+  { to: "/reply", icon: Sparkles, label: "Rizz" },
+  { to: "/analyzer", icon: Camera, label: "Analyze" },
+  { to: "/score", icon: Trophy, label: "Score" },
+  { to: "/settings", icon: SettingsIcon, label: "More" },
 ];
 
 export const BottomNav = () => {
   const { pathname } = useLocation();
   return (
-    <motion.nav
-      initial={{ y: 30, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 220, damping: 26 }}
-      className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[min(420px,calc(100%-1.5rem))]"
-    >
+    <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[min(420px,calc(100%-1.5rem))]">
       <div
-        className="relative flex items-stretch px-2 py-2 rounded-full"
+        className="relative flex items-stretch px-1.5 py-1.5 rounded-full"
         style={{
-          background: "hsl(234 32% 9% / 0.78)",
+          background: "hsl(234 32% 9% / 0.85)",
           backdropFilter: "blur(28px) saturate(180%)",
           WebkitBackdropFilter: "blur(28px) saturate(180%)",
-          border: "1px solid hsl(247 50% 70% / 0.12)",
-          boxShadow: "var(--shadow-lg), inset 0 1px 0 hsl(0 0% 100% / 0.04)",
+          border: "1px solid hsl(247 50% 70% / 0.10)",
+          boxShadow: "var(--shadow-lg)",
         }}
       >
-        {tabs.map(({ to, icon: Icon, label, center }) => {
-          const active =
-            pathname === to || (to === "/home" && pathname === "/");
+        {tabs.map(({ to, icon: Icon, label }) => {
+          const active = pathname === to || (to === "/home" && pathname === "/");
           return (
             <NavLink
               key={to}
               to={to}
-              aria-label={label}
-              className="relative flex-1 flex items-center justify-center py-2.5 rounded-full"
+              className="relative flex-1 flex flex-col items-center justify-center gap-0.5 py-2 rounded-full transition-colors"
             >
               {active && (
                 <motion.span
-                  layoutId="nav-pill-v2"
-                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                  className="absolute inset-1 rounded-full"
-                  style={{
-                    background: center
-                      ? "var(--gradient-rizz)"
-                      : "hsl(247 100% 70% / 0.14)",
-                    border: center
-                      ? "1px solid hsl(247 100% 80% / 0.4)"
-                      : "1px solid hsl(247 100% 70% / 0.35)",
-                    boxShadow: center ? "var(--glow-primary)" : "none",
-                  }}
+                  layoutId="nav-pill"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  className="absolute inset-0 rounded-full"
+                  style={{ background: "var(--gradient-rizz)", boxShadow: "var(--glow-soft)" }}
                 />
               )}
-              <motion.span
-                whileTap={{ scale: 0.85 }}
-                className={`relative flex items-center justify-center ${
-                  active
-                    ? center
-                      ? "text-primary-foreground"
-                      : "text-primary-glow"
-                    : "text-muted-foreground"
-                }`}
-              >
-                <Icon
-                  className={center ? "w-[22px] h-[22px]" : "w-[20px] h-[20px]"}
-                  strokeWidth={active ? 2.4 : 1.9}
-                />
-              </motion.span>
+              <span className={`relative flex flex-col items-center gap-0.5 ${active ? "text-primary-foreground" : "text-muted-foreground"}`}>
+                <Icon className="w-[18px] h-[18px]" strokeWidth={active ? 2.4 : 2} />
+                <span className="text-[10px] font-medium tracking-tight">{label}</span>
+              </span>
             </NavLink>
           );
         })}
       </div>
-    </motion.nav>
+    </nav>
   );
 };
